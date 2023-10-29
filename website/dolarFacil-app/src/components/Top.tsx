@@ -1,7 +1,10 @@
 import "/src/App.css";
 
 function Top(){
-    return <header>Dólar Fácil</header>;
+    return (
+    <>
+        <header className="bg-black bg-gradient">Dólar Fácil</header>;
+    </>
+    )
 }
-
 export default Top;
