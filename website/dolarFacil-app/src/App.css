@@ -1,0 +1,17 @@
+.DatePicker{
+    text-align: center;
+    margin-top: 25em;
+    font-size: 1em;
+}
+.BotaoConfirma{
+    margin-top: 0.5em;
+    text-align:center;
+    border: round;
+
+}
+header{
+    text-align: center;
+    background-color: black;
+    font-size: 3em;
+    color: white;
+}

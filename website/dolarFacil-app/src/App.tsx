@@ -1,9 +1,17 @@
-import Message from './components/Message';
-import ListGroup from './components/ListGroup';
+import DatePicker from './components/DatePicker';
+import Top from './components/Top';
 
 function App(){
-
-  return <div><Message/></div>
+  return (
+    <>
+      <Top/>
+      <div>
+        <>
+          <DatePicker/>
+        </>
+      </div>
+    </>
+    )
 }
 
 export default App;
