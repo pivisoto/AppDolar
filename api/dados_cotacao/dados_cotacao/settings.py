@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r-=z+2a#n4n&1n@$s0awa)owq))9+9tlbj=neh=rr^3*6)p3u@'
+SECRET_KEY = 'django-insecure-pf3+h5*4fww*d3p#$i(t3=f-v!6ik3xa^ax+0#mokg+n_d%+i9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,11 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     'rest_framework',
-    
-    'exemplo_autenticacao_autorizacao'
-    
+    'corsheaders',
+    'app'
 ]
 
 MIDDLEWARE = [
@@ -52,7 +50,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    
 ]
+
+REST_FRAME = {'DEFAULT_PERMISSION_CLASSES':[
+    'rest_framework.permission.AllowAny']}
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'dados_cotacao.urls'
 
@@ -80,8 +85,12 @@ WSGI_APPLICATION = 'dados_cotacao.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'defaultdb',
+        'USER':'avnadmin',
+        'PASSWORD':'AVNS_0pIOKeqNTGT4wqBsc6_',
+        'HOST':'database-dolarfacil-database-dolarfacil.a.aivencloud.com',
+        'PORT':'12950'
     }
 }
 

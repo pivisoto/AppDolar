@@ -1,5 +1,0 @@
-venv\Scripts\activate.bat (cmd)
-
-pip install django
-pip install djangorestframework psycopg2
-pip install django-environ

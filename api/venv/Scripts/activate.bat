@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=D:\desafio Kinea\api\venv
+set VIRTUAL_ENV=C:\Users\pivis\OneDrive - Instituto Maua de Tecnologia\Frontend\nodejs_mongoDB\AppDolar\api\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
