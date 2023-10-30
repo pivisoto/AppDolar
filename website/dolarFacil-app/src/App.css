@@ -1,6 +1,7 @@
 .DatePicker{
     text-align: center;
-    margin-top: 20em;
+    align-items: center;
+    margin-top: 18em;
     margin-left: 20%;
     margin-right: 20%;
     padding: 2em;
@@ -21,7 +22,7 @@
 }
 .block{
     margin-top: 1em;
-    width: 13em;
+    width: 14.5em;
     border: 1px round solid white;
     margin-bottom: 1em;
     border-radius: 1em;
@@ -54,4 +55,15 @@ input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-calendar-picker-indicator {
     display: none;
     -webkit-appearance: none;
+}
+
+footer{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  font-size: 1.7em;
+  text-align: center;
+  color: white;
+  font-family: fantasy,copperplate;
 }

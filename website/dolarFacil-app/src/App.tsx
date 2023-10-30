@@ -3,6 +3,7 @@ import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import DatePicker from './components/DatePicker';
 import Top from './components/Top';
+import Footer from './components/Footer'
 
 class App extends React.Component{
   state = { details: [], }
@@ -35,6 +36,7 @@ class App extends React.Component{
           </div>
         ))}
       </div>
+      <Footer/>
     </>
     )
   }
