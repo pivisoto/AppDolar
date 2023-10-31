@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import *
+from .models import DataSolModel
 
 class DataSolicitadaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DataSolModel   
-        fields = ['DataSolicitada','DolarSolicitado','DolarAtual']
+        model = DataSolModel  
+        fields = ('datasolicitada','dolarsolicitado','dolaratual')

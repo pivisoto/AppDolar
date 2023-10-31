@@ -20,22 +20,17 @@ class App extends React.Component{
     console.log(this.state);
   }
 
-  // Function to handle form submission
   submitForm(event) {
-    this.setState({
-      DataSolicitada: event.target.value
-    }); 
-    axios.get(`http://localhost:8000/verificar-cotacao?data=${this.state.DataSolicitada}`)
+    event.preventDefault();
+    axios.get(`http://localhost:8000/cotacao/${this.state.DataSolicitada}`)
     .then((response) => {
-      // Se a data tiver uma cotação no banco de dados, o servidor deve retornar a informação apropriada
-      const possuiCotacao = response.data.possuiCotacao;
-      this.setState({ possuiCotacao });
+      console.log("Cotação armazenada com sucesso",response)
     })
     .catch((error) => {
-      console.error('Erro ao verificar cotação:', error);
-    });
+      console.error('Erro ao armazenar cotação:', error);
+    })
     console.log(this.state);
-  }
+}
 /**  componentDidMount(){
       let data;
       axios.get('http://localhost:8000/')

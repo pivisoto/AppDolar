@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'requests',
     'app'
 ]
 
@@ -58,6 +59,14 @@ REST_FRAME = {'DEFAULT_PERMISSION_CLASSES':[
     'rest_framework.permission.AllowAny']}
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+CORS_ALLOW_METHODS = ['*']
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'dados_cotacao.urls'
 

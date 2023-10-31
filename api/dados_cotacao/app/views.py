@@ -4,22 +4,19 @@ import requests;
 import datetime;
 from rest_framework.response import Response;
 from  app.serializer import DataSolicitadaSerializer;
-from app.models import *;
+from app.models import DataSolModel;
 from django.http import JsonResponse
 from datetime import datetime
 import requests
 
 #obtem o valor da cotação do dólar atual e da data que foi solicitado
-def ObtemCotacao(data_solicitada):
+def ObtemCotacaoBancoCentral(data_solicitada):
     #formatação para que a api do banco central aceite a data
-    data_solicitada = datetime.strptime(data_solicitada, '%Y-%m-%d')
-    DataSolicitadaFormatada = data_solicitada.strftime('%m-%d-%Y')
-    url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataSolicitadaFormatada}\'&$top=1&$skip=0&$format=json'
+    url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{data_solicitada}\'&$top=1&$skip=0&$format=json'
 
     #obtem a data atual e formata
     DataAtual = datetime.now()
-    DataAtualFormatada = DataAtual.strftime('%m-%d-%Y')
-    url_DolarAtual = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataAtualFormatada}\'&$top=1&$skip=0&$format=json'
+    url_DolarAtual = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataAtual}\'&$top=1&$skip=0&$format=json'
     
     #busca e armazena o response da api (json)
     try:
@@ -41,26 +38,46 @@ def ObtemCotacao(data_solicitada):
         raise Exception("Erro de solicitação para a API do Banco Central")
         
                 
-def VerificaCotacao(request):
+def SalvaCotacaoBancoCentral(request):
     if request.method == 'GET':
         data_solicitada = request.GET.get('data')
-
-        DolarSolicitado , DolarAtual = ObtemCotacao(data_solicitada)
+        DolarSolicitado , DolarAtual = ObtemCotacaoBancoCentral(data_solicitada)
 
         if DolarSolicitado  is not None and DolarAtual is not None:
-            RetornaValores = {
-                'DataSolicitada': data_solicitada,
-                'DolarSolicitado': DolarSolicitado ,
-                'DolarAtual': DolarAtual
-            }
-            return JsonResponse(RetornaValores)
+            NovaCotacao = DataSolModel(
+                DataSolicitada = data_solicitada,
+                DolarSolicitado =  DolarSolicitado ,
+                DolarAtaul =  DolarAtual
+            )
+            return NovaCotacao.save()
         else:
             return JsonResponse({'mensagem': 'Falha ao obter cotação do Banco Central'}, status=400)
-                
-class DataSolView(views.APIView):
-    def post(self, request):
-        serializer = DataSolicitadaSerializer(data=request.data)
-        if serializer.is_valid():
-            datasol = DataSolModel(**serializer.validated_data)
-            return Response(DataSolicitadaSerializer(datasol).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+def VerificaBancoDados(data_solicitada):
+    try:
+        cotacao_existente = DataSolModel.objects.get(DataSolicitada=data_solicitada)
+        return True
+    except DataSolModel.DoesNotExist:
+        return False
+
+def VerificaEObtemCotacao(data_solicitada):
+    if VerificaBancoDados(data_solicitada):
+        cotacao_existente = DataSolModel.objects.get(DataSolicitada=data_solicitada)
+        DataSolicitada = cotacao_existente.DataSolicitada
+        DolarSolicitado = cotacao_existente.DolarSolicitado
+        DolarAtual = cotacao_existente.DolarAtual
+        return cotacao_existente
+    else:
+        DolarSolicitado, DolarAtual = ObtemCotacaoBancoCentral(data_solicitada)
+        return False
+
+def Cotacao(data_solicitada):
+    CotacaoBancoDados = VerificaEObtemCotacao(data_solicitada)
+    if  CotacaoBancoDados != False:
+        return JsonResponse({'A cotação já existe no banco'})
+    else:
+        SalvaCotacaoBancoCentral(data_solicitada)
+        return JsonResponse({'A cotação foi cadastrada no banco'})
+
+
+
