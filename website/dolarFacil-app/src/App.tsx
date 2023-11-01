@@ -22,7 +22,7 @@ class App extends React.Component{
 
   submitForm(event) {
     event.preventDefault();
-    axios.get(`http://localhost:8000/cotacao/${this.state.DataSolicitada}`)
+    axios.post(`http://localhost:8000/cotacao/${this.state.DataSolicitada}/`)
     .then((response) => {
       console.log("Cotação armazenada com sucesso",response)
     })

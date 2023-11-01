@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-pf3+h5*4fww*d3p#$i(t3=f-v!6ik3xa^ax+0#mokg+n_d%+i9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'requests',
-    'app'
+    'app',
 ]
 
 MIDDLEWARE = [
@@ -52,23 +52,29 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     
 ]
 
 REST_FRAME = {'DEFAULT_PERMISSION_CLASSES':[
     'rest_framework.permission.AllowAny']}
 
-CORS_ORIGIN_ALLOW_ALL = True
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
-
-CORS_ALLOW_METHODS = ['*']
-
-CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'dados_cotacao.urls'
+
+
+CORS_TRUSTED_ORIGINS = [
+    'http://localhost:5173/',
+    "http://127.0.0.1:5173",  
+]
+
+CSRF_COOKIE_SECURE = False
+
+CSRF_COOKIE_HTTPONLY = False
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
+
+CORS_ALLOW_ALL_ORIGINS: True
 
 TEMPLATES = [
     {
@@ -97,8 +103,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'defaultdb',
         'USER':'avnadmin',
-        'PASSWORD':'AVNS_0pIOKeqNTGT4wqBsc6_',
-        'HOST':'database-dolarfacil-database-dolarfacil.a.aivencloud.com',
+        'PASSWORD':'AVNS_Fu3DE7eVtqkbQHKuhsH',
+        'HOST':'pg-17cb8264-database-dolarfacil.a.aivencloud.com',
         'PORT':'12950'
     }
 }

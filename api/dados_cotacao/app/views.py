@@ -7,15 +7,23 @@ from  app.serializer import DataSolicitadaSerializer;
 from app.models import DataSolModel;
 from django.http import JsonResponse
 from datetime import datetime
+from .models import DataSolModel
 import requests
+from django.views.decorators.csrf import csrf_exempt
+
 
 #obtem o valor da cotação do dólar atual e da data que foi solicitado
 def ObtemCotacaoBancoCentral(data_solicitada):
     #formatação para que a api do banco central aceite a data
-    url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{data_solicitada}\'&$top=1&$skip=0&$format=json'
+    data_solicitada = datetime.strptime(data_solicitada, '%Y-%m-%d')
+    DataSolicitadaFormatada = data_solicitada.strftime('%m-%d-%Y')
+    print(DataSolicitadaFormatada)
+    url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataSolicitadaFormatada}\'&$top=100&$format=json&$select=cotacaoCompra'
 
-    #obtem a data atual e formata
-    DataAtual = datetime.now()
+    # Obtem a data atual e formata
+    #DataAtual = datetime.now().strftime('%m-%d-%Y')
+    DataAtual = '31-10-2023'
+    print(DataAtual)
     url_DolarAtual = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataAtual}\'&$top=1&$skip=0&$format=json'
     
     #busca e armazena o response da api (json)
@@ -38,7 +46,7 @@ def ObtemCotacaoBancoCentral(data_solicitada):
         raise Exception("Erro de solicitação para a API do Banco Central")
         
                 
-def SalvaCotacaoBancoCentral(request):
+def SalvaCotacaoBancoCentral(request,data_solicitada):
     if request.method == 'GET':
         data_solicitada = request.GET.get('data')
         DolarSolicitado , DolarAtual = ObtemCotacaoBancoCentral(data_solicitada)
@@ -47,7 +55,7 @@ def SalvaCotacaoBancoCentral(request):
             NovaCotacao = DataSolModel(
                 DataSolicitada = data_solicitada,
                 DolarSolicitado =  DolarSolicitado ,
-                DolarAtaul =  DolarAtual
+                DolarAtual =  DolarAtual
             )
             return NovaCotacao.save()
         else:
@@ -71,13 +79,25 @@ def VerificaEObtemCotacao(data_solicitada):
         DolarSolicitado, DolarAtual = ObtemCotacaoBancoCentral(data_solicitada)
         return False
 
-def Cotacao(data_solicitada):
-    CotacaoBancoDados = VerificaEObtemCotacao(data_solicitada)
-    if  CotacaoBancoDados != False:
-        return JsonResponse({'A cotação já existe no banco'})
-    else:
-        SalvaCotacaoBancoCentral(data_solicitada)
-        return JsonResponse({'A cotação foi cadastrada no banco'})
-
+@csrf_exempt
+def Cotacao(request,data_solicitada):
+    try:
+        cotacao_existente = DataSolModel.objects.filter(DataSolicitada=data_solicitada).first()
+        if cotacao_existente:
+            return JsonResponse({'mensagem': 'A cotação já existe no banco'})
+        DolarSolicitado,DolarAtual = ObtemCotacaoBancoCentral(data_solicitada)
+        if DolarSolicitado is not None:
+            # Salva a cotação no banco de dados
+            NovaCotacao = DataSolModel(
+                DataSolicitada=data_solicitada,
+                DolarSolicitado=DolarSolicitado,
+                DolarAtual=DolarAtual
+            )
+            NovaCotacao.save()
+            return JsonResponse({'mensagem': 'A cotação foi cadastrada no banco'})
+        else:
+            return JsonResponse({'mensagem': 'Falha ao obter cotação do Banco Central'}, status=400)
+    except Exception as e:
+        return JsonResponse({'mensagem': f'Erro: {str(e)}'}, status=400)
 
 
