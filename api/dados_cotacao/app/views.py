@@ -45,39 +45,22 @@ def ObtemCotacaoBancoCentral(data_solicitada):
     except:
         raise Exception("Erro de solicitação para a API do Banco Central")
         
-                
-# def SalvaCotacaoBancoCentral(request,data_solicitada):
-#     if request.method == 'GET':
-#         data_solicitada = request.GET.get('data')
-#         DolarSolicitado , DolarAtual = ObtemCotacaoBancoCentral(data_solicitada)
 
-#         if DolarSolicitado  is not None and DolarAtual is not None:
-#             NovaCotacao = DataSolModel(
-#                 DataSolicitada = data_solicitada,
-#                 DolarSolicitado =  DolarSolicitado ,
-#                 DolarAtual =  DolarAtual
-#             )
-#             return NovaCotacao.save()
-#         else:
-#             return JsonResponse({'mensagem': 'Falha ao obter cotação do Banco Central'}, status=400)
-        
-# def VerificaBancoDados(data_solicitada):
-#     try:
-#         cotacao_existente = DataSolModel.objects.get(DataSolicitada=data_solicitada)
-#         return True
-#     except DataSolModel.DoesNotExist:
-#         return False
+def procuraDolarAtual():
+    DataAtual = datetime.now().strftime('%m-%d-%Y')
+    print(DataAtual)
+    url_DolarAtual= f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataAtual}\'&$top=100&$format=json&$select=cotacaoCompra'
+    try:
+        responseDolarAtual = requests.get(url_DolarAtual)
+        dataDolarSolicitado = responseDolarAtual.json()
+        if 'value' in dataDolarSolicitado and len(dataDolarSolicitado['value']) > 0:
+            DolarAtual = dataDolarSolicitado['value'][0]['cotacaoCompra']
+            return DolarAtual
+        else:
+            raise Exception("Nenhum resultado encontrado para a data especificada")
+    except:
+        raise Exception("Erro de solicitação para a API do Banco Central")
 
-# def VerificaEObtemCotacao(data_solicitada):
-#     if VerificaBancoDados(data_solicitada):
-#         cotacao_existente = DataSolModel.objects.get(DataSolicitada=data_solicitada)
-#         DataSolicitada = cotacao_existente.DataSolicitada
-#         DolarSolicitado = cotacao_existente.DolarSolicitado
-#         DolarAtual = cotacao_existente.DolarAtual
-#         return cotacao_existente
-#     else:
-#         DolarSolicitado, DolarAtual = ObtemCotacaoBancoCentral(data_solicitada)
-#         return False
 
 @api_view(['POST']) 
 def Cotacao(request,data_solicitada):
@@ -97,5 +80,26 @@ def Cotacao(request,data_solicitada):
             return JsonResponse({'mensagem': 'Falha ao obter cotação do Banco Central'}, status=400)
     except Exception as e:
         return JsonResponse({'mensagem': f'Erro: {str(e)}'}, status=400)
-
-
+        
+@api_view(['GET']) 
+def EnviaCotacao(request, data_solicitada):
+    try:
+        dolarAtual = procuraDolarAtual()
+        cotacao_existente = DataSolModel.objects.filter(DataSolicitada=data_solicitada).first()
+        if cotacao_existente:
+            ResponseData = {
+                'DolarSolicitado': cotacao_existente.DolarSolicitado,
+                'DolarAtual' : dolarAtual,
+            }
+            return JsonResponse(ResponseData)
+        DolarSolicitado = ObtemCotacaoBancoCentral(data_solicitada)
+        if DolarSolicitado is not None:
+            ResponseData = {
+                'DolarSolicitado': DolarSolicitado,
+                'DolarAtual' : dolarAtual,
+            }
+            return JsonResponse()
+        else:
+            return JsonResponse({'mensagem': 'cotação não existe'}, status=400)
+    except Exception as e:
+        return JsonResponse({'mensagem': f'Erro: {str(e)}'}, status=400)

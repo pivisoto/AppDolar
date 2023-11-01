@@ -2,8 +2,8 @@
     text-align: center;
     align-items: center;
     margin-top: 8em;
-    margin-left: 20%;
-    margin-right: 20%;
+    margin-left: 10%;
+    margin-right: 10%;
     padding: 2em;
     font-size: 1em;
     border: 1px solid white round 10px;
@@ -19,10 +19,11 @@
     font-size: 3em;
     margin-bottom: 0.3em;
     font-family:fantasy,copperplate;
+    
 }
 .block{
     margin-top: 1em;
-    width: 14.5em;
+    width: 14.2em;
     border: 1px round solid white;
     margin-bottom: 1em;
     border-radius: 1em;
@@ -66,4 +67,16 @@ footer{
   text-align: center;
   color: white;
   font-family: fantasy,copperplate;
+}
+
+.Valores{
+    width: 90%;
+    margin: auto;
+    border: 1px solid white;
+    border-radius:0.2em;
+    color: black;
+    background-color: white;
+    text-align: center;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 1em;
 }

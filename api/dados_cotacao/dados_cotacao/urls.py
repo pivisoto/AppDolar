@@ -5,5 +5,6 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('cotacao/<str:data_solicitada>/',views.Cotacao)
+    path('cotacao/<str:data_solicitada>/',views.Cotacao),
+    path('enviacotacao/<str:data_solicitada>/',views.EnviaCotacao) 
 ]
