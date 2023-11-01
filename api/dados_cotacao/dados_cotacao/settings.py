@@ -70,11 +70,9 @@ CORS_TRUSTED_ORIGINS = [
 
 CSRF_COOKIE_SECURE = False
 
-CSRF_COOKIE_HTTPONLY = False
-
 CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
 
-CORS_ALLOW_ALL_ORIGINS: True
+CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
     {
@@ -103,8 +101,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'defaultdb',
         'USER':'avnadmin',
-        'PASSWORD':'AVNS_Fu3DE7eVtqkbQHKuhsH',
-        'HOST':'pg-17cb8264-database-dolarfacil.a.aivencloud.com',
+        'PASSWORD':'AVNS_t55QQRIAyl0JtMLSMwF',
+        'HOST':'pg-14c7c87c-database-dolarfacil.a.aivencloud.com',
         'PORT':'12950'
     }
 }

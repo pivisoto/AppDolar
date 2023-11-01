@@ -4,4 +4,4 @@ from .models import DataSolModel
 class DataSolicitadaSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataSolModel  
-        fields = ('datasolicitada','dolarsolicitado','dolaratual')
+        fields = ['datasolicitada','dolarsolicitado']
