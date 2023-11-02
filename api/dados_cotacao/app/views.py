@@ -27,7 +27,7 @@ def ObtemCotacaoBancoCentral(data_solicitada):
     except:
         raise Exception("Erro de solicitação para a API do Banco Central")
         
-
+ #Codigo que garante que a data da cotação seja valida para a api do banco central
 def procuraDataValida():
     UmDia = timedelta(days=1)
     DoisDias = timedelta(days=2)
@@ -38,7 +38,7 @@ def procuraDataValida():
             return DataAtual
         else:
             DataAtual = DataAtual - UmDia
-            DataAtual.strftime('%m-%d-%Y')
+            DataAtual = DataAtual.strftime('%m-%d-%Y')
             return DataAtual
     else:
         if DataAtual.weekday() == 0:
@@ -61,7 +61,6 @@ def procuraDataValida():
     
 def procuraDolarAtual():
     DataAtual = procuraDataValida()
-    #Codigo que garante que a data da cotação seja valida para a api do banco central
     url_DolarAtual= f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataAtual}\'&$top=100&$format=json&$select=cotacaoCompra'
     try:
         responseDolarAtual = requests.get(url_DolarAtual)
@@ -75,6 +74,7 @@ def procuraDolarAtual():
         raise Exception("Erro de solicitação para a API do Banco Central")
 
 
+    
 @api_view(['POST']) 
 def Cotacao(request,data_solicitada):
     try:

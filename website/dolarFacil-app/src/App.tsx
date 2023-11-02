@@ -39,8 +39,8 @@ class App extends React.Component{
     axios.get(`http://localhost:8000/enviacotacao/${this.state.DataSolicitada}/`)
     .then((response) => {
       if(response.data.DolarSolicitado){
-        this.setState({DolarSolicitado: response.data.DolarSolicitado});
-        this.setState({DolarAtual: response.data.DolarAtual})
+        this.setState({DolarSolicitado: response.data.DolarSolicitado.toFixed(2)});
+        this.setState({DolarAtual: response.data.DolarAtual.toFixed(2)})
         const variacao = ((response.data.DolarAtual - response.data.DolarSolicitado) / response.data.DolarSolicitado) * 100;
         this.setState({ Variacao: variacao.toFixed(2)});
         console.log(response)
@@ -80,7 +80,7 @@ class App extends React.Component{
             <button type="submit" onClick={this.submitForm} className="block btn btn-outline-light">confirmar</button>
           </div>
           <div className='Valores'>
-            <h2>{this.state.DolarSolicitado !== '' ? `Dólar Solicitado: R$ ${this.state.DolarAtual}` : 'Dólar Solicitado: '}</h2>
+            <h2>{this.state.DolarSolicitado !== '' ? `Dólar Solicitado: R$ ${this.state.DolarSolicitado}` : 'Dólar Solicitado: '}</h2>
             <h2>{this.state.DolarAtual !== '' ? `Dólar Atual: R$ ${this.state.DolarAtual}` : 'Dólar Atual: '}</h2>
             <h2>{this.state.Variacao !== '' ? `Variação: ${this.state.Variacao}%` : 'Variação : '}</h2>
             <h2>Variação significativa :</h2>
