@@ -11,20 +11,10 @@ def ObtemCotacaoBancoCentral(data_solicitada):
     DataSolicitadaFormatada = data_solicitada.strftime('%m-%d-%Y')
     print(DataSolicitadaFormatada)
     url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataSolicitadaFormatada}\'&$top=100&$format=json&$select=cotacaoCompra'
-
-    # Obtem a data atual e formata
-    #DataAtual = datetime.now().strftime('%m-%d-%Y')
-    # DataAtual = '10-31-2023'
-    # print(DataAtual)
-    # url_DolarAtual = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataAtual}\'&$top=1&$skip=0&$format=json'
-    
     #busca e armazena o response da api (json)
     try:
         responseDolarSolicitado = requests.get(url_DolarSolicitado)
         dataDolarSolicitado = responseDolarSolicitado.json()
-        
-        # responseDolarAtual = requests.get(url_DolarAtual)
-        # dataDolarAtual = responseDolarAtual.json()
         
         #verifica se algum valor foi retornado , em caso positivo adiciona os valores a variavel DolarSolicitado e DolarAtual
         #caso contrario retorna uma mensagem que nenhum valor foi encontrado
@@ -46,7 +36,6 @@ def procuraDataValida():
         if DataAtual.hour > 13:
             DataAtual = DataAtual.strftime('%m-%d-%Y')
             return DataAtual
-            
         else:
             DataAtual = DataAtual - UmDia
             DataAtual.strftime('%m-%d-%Y')
@@ -69,7 +58,7 @@ def procuraDataValida():
                 DataAtual = DataAtual - DoisDias
                 DataAtual = DataAtual.strftime('%m-%d-%Y')
                 return DataAtual
-            
+    
 def procuraDolarAtual():
     DataAtual = procuraDataValida()
     #Codigo que garante que a data da cotação seja valida para a api do banco central
@@ -108,22 +97,22 @@ def Cotacao(request,data_solicitada):
 @api_view(['GET']) 
 def EnviaCotacao(request, data_solicitada):
     try:
-        dolarAtual = procuraDolarAtual()
-        cotacao_existente = DataSolModel.objects.filter(DataSolicitada=data_solicitada).first()
-        if cotacao_existente:
+        DolarAtual = procuraDolarAtual()
+        CotacaoExistente = DataSolModel.objects.filter(DataSolicitada=data_solicitada).first()
+        if CotacaoExistente:
             ResponseData = {
-                'DolarSolicitado': cotacao_existente.DolarSolicitado,
-                'DolarAtual' : dolarAtual,
+                'DolarSolicitado': CotacaoExistente.DolarSolicitado,
+                'DolarAtual' : DolarAtual,
             }
             return JsonResponse(ResponseData)
         DolarSolicitado = ObtemCotacaoBancoCentral(data_solicitada)
         if DolarSolicitado is not None:
             ResponseData = {
                 'DolarSolicitado': DolarSolicitado,
-                'DolarAtual' : dolarAtual,
+                'DolarAtual' : DolarAtual,
             }
-            return JsonResponse()
+            return JsonResponse(ResponseData)
         else:
             return JsonResponse({'mensagem': 'cotação não existe'}, status=400)
-    except Exception as e:
-        return JsonResponse({'mensagem': f'Erro: {str(e)}'}, status=400)
+    except Exception:
+        return JsonResponse({'mensagem': f'Erro: erro correia'}, status=400)

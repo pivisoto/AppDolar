@@ -11,6 +11,7 @@ class App extends React.Component{
         DataSolicitada: '',
         DolarSolicitado: '',
         DolarAtual: '',
+        Variacao: '',
     }
     this.changeHandler=this.changeHandler.bind(this);
     this.submitForm=this.submitForm.bind(this);
@@ -40,6 +41,8 @@ class App extends React.Component{
       if(response.data.DolarSolicitado){
         this.setState({DolarSolicitado: response.data.DolarSolicitado});
         this.setState({DolarAtual: response.data.DolarAtual})
+        const variacao = ((response.data.DolarAtual - response.data.DolarSolicitado) / response.data.DolarSolicitado) * 100;
+        this.setState({ Variacao: variacao.toFixed(2)});
         console.log(response)
         }
       else{
@@ -77,9 +80,10 @@ class App extends React.Component{
             <button type="submit" onClick={this.submitForm} className="block btn btn-outline-light">confirmar</button>
           </div>
           <div className='Valores'>
-            <h2>Dólar Solicitado: {this.state.DolarSolicitado}</h2>
-            <h2>Dólar Atual: {this.state.DolarAtual}</h2>
-            <h2>Variação do dólar: </h2>
+            <h2>{this.state.DolarSolicitado !== '' ? `Dólar Solicitado: R$ ${this.state.DolarAtual}` : 'Dólar Solicitado: '}</h2>
+            <h2>{this.state.DolarAtual !== '' ? `Dólar Atual: R$ ${this.state.DolarAtual}` : 'Dólar Atual: '}</h2>
+            <h2>{this.state.Variacao !== '' ? `Variação: ${this.state.Variacao}%` : 'Variação : '}</h2>
+            <h2>Variação significativa :</h2>
           </div>
         </div>
         </>
