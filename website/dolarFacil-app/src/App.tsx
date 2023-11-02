@@ -53,6 +53,7 @@ class App extends React.Component{
       console.error(`Erro: ${error}`);
     });
   }
+  
 /**  componentDidMount(){
       let data;
       axios.get('http://localhost:8000/')
@@ -82,8 +83,12 @@ class App extends React.Component{
           <div className='Valores'>
             <h2 className='Valor'>{this.state.DolarSolicitado !== '' ? `Dólar Solicitado: R$ ${this.state.DolarSolicitado}` : 'Dólar Solicitado: '}</h2>
             <h2 className='Valor'>{this.state.DolarAtual !== '' ? `Dólar Atual: R$ ${this.state.DolarAtual}` : 'Dólar Atual: '}</h2>
-            <h2 className='Valor'>{this.state.Variacao !== '' ? `Variação: ${this.state.Variacao}%` : 'Variação : '}</h2>
-            <h2 className='Valor'>Variação significativa :</h2>
+            <h2 className={`Valor ${parseFloat(this.state.Variacao) > 0 ? 'Verde' : 'Vermelho'}`}>
+              {this.state.Variacao !== '' ? `Variação: ${this.state.Variacao}%` : 'Variação : '}
+            </h2>
+            <h2 className='Valor'>
+            Variação significativa: {parseFloat(this.state.Variacao) > 1.5913 || parseFloat(this.state.Variacao) < -1.5152 ? 'Sim' : 'Não'}
+            </h2>
           </div>
         </div>
         </>

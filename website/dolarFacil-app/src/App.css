@@ -10,7 +10,6 @@
     border-radius: 1em;
     color: white;
 }
-
 .BotaoConfirma{
     margin-top: 0.1em;
     text-align:center;
@@ -20,6 +19,13 @@
     font-size: 3em;
     margin-bottom: 0.3em;
     font-family:fantasy,copperplate;
+}
+.Verde {
+    color: green; /* Cor verde para variação positiva */
+  }
+  
+.Vermelho {
+    color: red; /* Cor vermelha para variação negativa ou igual a zero */
 }
 .Valor{
     font-size: 2em;
