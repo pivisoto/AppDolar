@@ -1,15 +1,7 @@
-from django.shortcuts import render
-from rest_framework import views, status;
-import requests;
-import datetime;
-from rest_framework.response import Response;
-from  app.serializer import DataSolicitadaSerializer;
-from app.models import DataSolModel;
 from django.http import JsonResponse
-from datetime import datetime
+from datetime import datetime, timedelta
 from .models import DataSolModel
 import requests
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 
 #obtem o valor da cotação do dólar atual e da data que foi solicitado
@@ -46,15 +38,47 @@ def ObtemCotacaoBancoCentral(data_solicitada):
         raise Exception("Erro de solicitação para a API do Banco Central")
         
 
+def procuraDataValida():
+    UmDia = timedelta(days=1)
+    DoisDias = timedelta(days=2)
+    DataAtual = datetime.now()
+    if DataAtual.weekday() not in [0,5,6]:
+        if DataAtual.hour > 13:
+            DataAtual = DataAtual.strftime('%m-%d-%Y')
+            return DataAtual
+            
+        else:
+            DataAtual = DataAtual - UmDia
+            DataAtual.strftime('%m-%d-%Y')
+            return DataAtual
+    else:
+        if DataAtual.weekday() == 0:
+            if DataAtual.hour > 13:
+                DataAtual.strftime('%m-%d-%Y')
+                return DataAtual
+            else:
+                DataAtual = DataAtual - DoisDias
+                DataAtual = DataAtual.strftime('%m-%d-%Y')
+                return DataAtual
+        else:
+            if DataAtual.weekday() == 5:
+                DataAtual = DataAtual - UmDia
+                DataAtual = DataAtual.strftime('%m-%d-%Y')
+                return DataAtual
+            else:
+                DataAtual = DataAtual - DoisDias
+                DataAtual = DataAtual.strftime('%m-%d-%Y')
+                return DataAtual
+            
 def procuraDolarAtual():
-    DataAtual = datetime.now().strftime('%m-%d-%Y')
-    print(DataAtual)
+    DataAtual = procuraDataValida()
+    #Codigo que garante que a data da cotação seja valida para a api do banco central
     url_DolarAtual= f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataAtual}\'&$top=100&$format=json&$select=cotacaoCompra'
     try:
         responseDolarAtual = requests.get(url_DolarAtual)
-        dataDolarSolicitado = responseDolarAtual.json()
-        if 'value' in dataDolarSolicitado and len(dataDolarSolicitado['value']) > 0:
-            DolarAtual = dataDolarSolicitado['value'][0]['cotacaoCompra']
+        dataDolarAtual = responseDolarAtual.json()
+        if 'value' in dataDolarAtual and len(dataDolarAtual['value']) > 0:
+            DolarAtual = dataDolarAtual['value'][0]['cotacaoCompra']
             return DolarAtual
         else:
             raise Exception("Nenhum resultado encontrado para a data especificada")
