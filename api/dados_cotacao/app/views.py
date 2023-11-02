@@ -31,7 +31,10 @@ def ObtemCotacaoBancoCentral(data_solicitada):
 def procuraDataValida():
     UmDia = timedelta(days=1)
     DoisDias = timedelta(days=2)
-    DataAtual = datetime.now()
+    TresDias = timedelta(days=3)
+    #DataAtual = datetime.now()
+    DataAtual = datetime(2023, 11, 1, 14, 0) #Quarta feira depois das 13
+    print(DataAtual)
     if DataAtual.weekday() not in [0,5,6]:
         if DataAtual.hour > 13:
             DataAtual = DataAtual.strftime('%m-%d-%Y')
@@ -43,10 +46,10 @@ def procuraDataValida():
     else:
         if DataAtual.weekday() == 0:
             if DataAtual.hour > 13:
-                DataAtual.strftime('%m-%d-%Y')
+                DataAtual = DataAtual.strftime('%m-%d-%Y')
                 return DataAtual
             else:
-                DataAtual = DataAtual - DoisDias
+                DataAtual = DataAtual - TresDias
                 DataAtual = DataAtual.strftime('%m-%d-%Y')
                 return DataAtual
         else:

@@ -80,10 +80,10 @@ class App extends React.Component{
             <button type="submit" onClick={this.submitForm} className="block btn btn-outline-light">confirmar</button>
           </div>
           <div className='Valores'>
-            <h2>{this.state.DolarSolicitado !== '' ? `Dólar Solicitado: R$ ${this.state.DolarSolicitado}` : 'Dólar Solicitado: '}</h2>
-            <h2>{this.state.DolarAtual !== '' ? `Dólar Atual: R$ ${this.state.DolarAtual}` : 'Dólar Atual: '}</h2>
-            <h2>{this.state.Variacao !== '' ? `Variação: ${this.state.Variacao}%` : 'Variação : '}</h2>
-            <h2>Variação significativa :</h2>
+            <h2 className='Valor'>{this.state.DolarSolicitado !== '' ? `Dólar Solicitado: R$ ${this.state.DolarSolicitado}` : 'Dólar Solicitado: '}</h2>
+            <h2 className='Valor'>{this.state.DolarAtual !== '' ? `Dólar Atual: R$ ${this.state.DolarAtual}` : 'Dólar Atual: '}</h2>
+            <h2 className='Valor'>{this.state.Variacao !== '' ? `Variação: ${this.state.Variacao}%` : 'Variação : '}</h2>
+            <h2 className='Valor'>Variação significativa :</h2>
           </div>
         </div>
         </>
