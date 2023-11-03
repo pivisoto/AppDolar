@@ -87,7 +87,7 @@ class App extends React.Component{
               {this.state.Variacao !== '' ? `Variação: ${this.state.Variacao}%` : 'Variação : '}
             </h2>
             <h2 className='Valor'>
-            Variação significativa: {parseFloat(this.state.Variacao) > 1.5913 || parseFloat(this.state.Variacao) < -1.5152 ? 'Sim' : 'Não'}
+            Variação significativa: {parseFloat(this.state.Variacao) >= 1.60 || parseFloat(this.state.Variacao) <= -1.52 ? 'Sim' : 'Não'}
             </h2>
           </div>
         </div>
