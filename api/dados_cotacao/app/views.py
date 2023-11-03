@@ -68,7 +68,6 @@ def procuraDataValidaSolicitada(DataSolicitada):
         if DataSolicitada.weekday() == 5:
             DataSolicitada = DataSolicitada - UmDia
             DataSolicitada = DataSolicitada.strftime('%m-%d-%Y')
-            print(DataSolicitada)
             return DataSolicitada
         else:
             DataSolicitada = DataSolicitada - DoisDias
@@ -95,7 +94,7 @@ def procuraDolarAtual():
 def Cotacao(request,data_solicitada):
     try:
         dataSolicitada = procuraDataValidaSolicitada(data_solicitada)
-        cotacao_existente = DataSolModel.objects.filter(DataSolicitada=dataSolicitada).first()
+        cotacao_existente = DataSolModel.objects.filter(DataSolicitada=data_solicitada).first()
         if cotacao_existente:
             return JsonResponse({'mensagem': 'A cotação já existe no banco'})
         DolarSolicitado = ObtemCotacaoBancoCentral(data_solicitada)
