@@ -2,11 +2,6 @@ Rodar o server:
 - python manage.py runserver
 
 caso necessario
-pip install django
-pip install djangorestframework
-pip install djangorestframework psycopg2
-pip install django-cors-headers
-pip install requests
 python manage.py migrate
 
 superuser:
