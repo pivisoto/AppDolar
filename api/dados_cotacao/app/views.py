@@ -7,15 +7,12 @@ from rest_framework.decorators import api_view
 #obtem o valor da cotação do dólar atual e da data que foi solicitado
 def ObtemCotacaoBancoCentral(data_solicitada):
     #formatação para que a api do banco central aceite a data
-    data_solicitada = datetime.strptime(data_solicitada, '%Y-%m-%d')
-    DataSolicitadaFormatada = data_solicitada.strftime('%m-%d-%Y')
-    print(DataSolicitadaFormatada)
-    url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataSolicitadaFormatada}\'&$top=100&$format=json&$select=cotacaoCompra'
+    data_solicitada = procuraDataValidaSolicitada(data_solicitada)
+    url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{data_solicitada}\'&$top=100&$format=json&$select=cotacaoCompra'
     #busca e armazena o response da api (json)
     try:
         responseDolarSolicitado = requests.get(url_DolarSolicitado)
         dataDolarSolicitado = responseDolarSolicitado.json()
-        
         #verifica se algum valor foi retornado , em caso positivo adiciona os valores a variavel DolarSolicitado e DolarAtual
         #caso contrario retorna uma mensagem que nenhum valor foi encontrado
         if 'value' in dataDolarSolicitado and len(dataDolarSolicitado['value']) > 0:
@@ -28,7 +25,7 @@ def ObtemCotacaoBancoCentral(data_solicitada):
         raise Exception("Erro de solicitação para a API do Banco Central")
         
  #Codigo que garante que a data da cotação seja valida para a api do banco central
-def procuraDataValida():
+def procuraDataValidaAtual():
     UmDia = timedelta(days=1)
     DoisDias = timedelta(days=2)
     TresDias = timedelta(days=3)
@@ -61,9 +58,27 @@ def procuraDataValida():
                 DataAtual = DataAtual - DoisDias
                 DataAtual = DataAtual.strftime('%m-%d-%Y')
                 return DataAtual
-    
+
+def procuraDataValidaSolicitada(DataSolicitada):
+    UmDia = timedelta(days=1)
+    DoisDias = timedelta(days=2)
+    DataSolicitada = datetime.strptime(DataSolicitada, '%Y-%m-%d')
+    print(DataSolicitada.weekday())
+    if DataSolicitada.weekday() not in [5,6]:
+        DataSolicitada = DataSolicitada.strftime('%m-%d-%Y')
+        return DataSolicitada
+    else:
+        if DataSolicitada.weekday() == 5:
+            DataSolicitada = DataSolicitada - UmDia
+            DataSolicitada = DataSolicitada.strftime('%m-%d-%Y')
+            return DataSolicitada
+        else:
+            DataSolicitada = DataSolicitada - DoisDias
+            DataSolicitada = DataSolicitada.strftime('%m-%d-%Y')
+            return DataSolicitada  
+  
 def procuraDolarAtual():
-    DataAtual = procuraDataValida()
+    DataAtual = procuraDataValidaAtual()
     url_DolarAtual= f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataAtual}\'&$top=100&$format=json&$select=cotacaoCompra'
     try:
         responseDolarAtual = requests.get(url_DolarAtual)
@@ -81,7 +96,8 @@ def procuraDolarAtual():
 @api_view(['POST']) 
 def Cotacao(request,data_solicitada):
     try:
-        cotacao_existente = DataSolModel.objects.filter(DataSolicitada=data_solicitada).first()
+        dataSolicitada = procuraDataValidaSolicitada(data_solicitada)
+        cotacao_existente = DataSolModel.objects.filter(DataSolicitada=dataSolicitada).first()
         if cotacao_existente:
             return JsonResponse({'mensagem': 'A cotação já existe no banco'})
         DolarSolicitado = ObtemCotacaoBancoCentral(data_solicitada)
