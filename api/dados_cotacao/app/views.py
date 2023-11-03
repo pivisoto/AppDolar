@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view
 #obtem o valor da cotação do dólar atual e da data que foi solicitado
 def ObtemCotacaoBancoCentral(data_solicitada):
     #formatação para que a api do banco central aceite a data
-    data_solicitada = procuraDataValidaSolicitada(data_solicitada)
-    url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{data_solicitada}\'&$top=100&$format=json&$select=cotacaoCompra'
+    DataSolicitada = procuraDataValidaSolicitada(data_solicitada)
+    url_DolarSolicitado = f'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=\'{DataSolicitada}\'&$top=100&$format=json&$select=cotacaoCompra'
     #busca e armazena o response da api (json)
     try:
         responseDolarSolicitado = requests.get(url_DolarSolicitado)
@@ -29,9 +29,7 @@ def procuraDataValidaAtual():
     UmDia = timedelta(days=1)
     DoisDias = timedelta(days=2)
     TresDias = timedelta(days=3)
-    #DataAtual = datetime.now()
-    DataAtual = datetime(2023, 11, 1, 14, 0) #Quarta feira depois das 13
-    print(DataAtual)
+    DataAtual = datetime.now()
     if DataAtual.weekday() not in [0,5,6]:
         if DataAtual.hour > 13:
             DataAtual = DataAtual.strftime('%m-%d-%Y')
@@ -63,7 +61,6 @@ def procuraDataValidaSolicitada(DataSolicitada):
     UmDia = timedelta(days=1)
     DoisDias = timedelta(days=2)
     DataSolicitada = datetime.strptime(DataSolicitada, '%Y-%m-%d')
-    print(DataSolicitada.weekday())
     if DataSolicitada.weekday() not in [5,6]:
         DataSolicitada = DataSolicitada.strftime('%m-%d-%Y')
         return DataSolicitada
@@ -71,6 +68,7 @@ def procuraDataValidaSolicitada(DataSolicitada):
         if DataSolicitada.weekday() == 5:
             DataSolicitada = DataSolicitada - UmDia
             DataSolicitada = DataSolicitada.strftime('%m-%d-%Y')
+            print(DataSolicitada)
             return DataSolicitada
         else:
             DataSolicitada = DataSolicitada - DoisDias
